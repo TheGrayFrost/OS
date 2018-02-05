@@ -133,28 +133,65 @@ int main()
 	vector <int> art, bt;
 	double t;
 
+    ofstream fcf_file;
+  	fcf_file.open ("fcfs.dat",std::ofstream::out | std::ofstream::app);
+  	ofstream sjf_file;
+  	sjf_file.open ("sjf.dat",std::ofstream::out | std::ofstream::app);
+  	ofstream rr1_file;
+  	rr1_file.open ("rr1.dat",std::ofstream::out | std::ofstream::app);
+  	ofstream rr2_file;
+  	rr2_file.open ("rr2.dat",std::ofstream::out | std::ofstream::app);
+  	ofstream rr3_file;
+  	rr3_file.open ("rr3.dat",std::ofstream::out | std::ofstream::app);
+
+
 	cout << "Please enter number of processes: ";
+	float avg_fcfs = 0, avg_sjf = 0,avg_rr1 = 0,avg_rr2= 0, avg_rr3 = 0;
 	cin >> n;
-	art.push_back(0);
+	
 
-	for (int i = 0; i < n; ++i)
+	for (int j = 0; j < 10; ++j)
 	{
-		// generating exponential inter-arrival times
-		t = (1.0 * rand())/RAND_MAX;
-		art.push_back(-(log(t)/MEAN)); 
-		if (art[i+1] > 10) //makes it not random
-			art[i+1] = 10;
+		art.clear();
+		bt.clear();
+		art.push_back(0);
+		for (int i = 0; i < n; ++i)
+		{
+			// generating exponential inter-arrival times
+			t = (1.0 * rand())/RAND_MAX;
+			art.push_back(-(log(t)/MEAN)); 
+			if (art[i+1] > 10) //makes it not random
+				art[i+1] = 10;
 
-		// calculating actual arrival times
-		art[i+1] += art[i];
+			// calculating actual arrival times
+			art[i+1] += art[i];
 
-		// generating uniform burst times
-		bt.push_back((rand() % 20) + 1);
-		//cout << i + 1 << ". " << art[i] << " " << bt[i] << "\n";
-		//cout << roundrobin(art, bt, 5) << "\n";
-		//cout << fcfs(art, bt) << "\n";
+			// generating uniform burst times
+			bt.push_back((rand() % 20) + 1);
+			//cout << i + 1 << ". " << art[i] << " " << bt[i] << "\n";
+			//cout << roundrobin(art, bt, 5) << "\n";
+			//cout << fcfs(art, bt) << "\n";
+		}
+		art.pop_back();
+
+	
+		avg_fcfs += fcfs(art, bt);
+		avg_sjf += preemp_sjf(art,bt);
+		avg_rr1 += roundrobin(art, bt, 1);
+		avg_rr2 +=roundrobin(art, bt, 2);
+		avg_rr3 +=roundrobin(art, bt, 5);
+		/* code */
 	}
-	art.pop_back();
+	fcf_file << n <<"\t"<<avg_fcfs/10<<endl;
+	sjf_file << n <<"\t"<<avg_sjf/10<<endl;
+	rr1_file << n <<"\t"<<avg_rr1/10<<endl;
+	rr2_file << n <<"\t"<<avg_rr2/10<<endl;
+	rr3_file << n <<"\t"<<avg_rr3/10<<endl;
+	fcf_file.close();
+	sjf_file.close();
+	rr1_file.close();
+	rr2_file.close();
+	rr3_file.close();
 	//cout << preemp_sjf(art, bt);
 	/*
 	int h[] = {0, 7, 10, 12};
@@ -162,5 +199,6 @@ int main()
 	art.assign(h, h + 4);
 	bt.assign(w, w + 4);
 	cout << fcfs(art, bt) << "\n";*/
+
 	return 0;
 }
