@@ -24,6 +24,7 @@ public:
         return n1.rem > n2.rem;
     }
 };
+
 double preemp_sjf(vector <int> art, vector <int> bt)
 {
 	priority_queue<node, std::vector<node> ,mycomparator> queue;

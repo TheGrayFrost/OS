@@ -101,11 +101,11 @@ bool internal (const char * cmd, const char * arg = NULL)
 			cout << "\nNo arguments provided to kill.\nChoose option (A) and type help kill for more info.\n";
 		else
 		{
-			if (isalpha(arg[0]) || stoi(arg) < 0)
+			if (isalpha(arg[0]) || atoi(arg) < 0)
 				cout << "\nInvald PID entered. Please enter a positive numeric number.\nChoose option (A) and type help kill for more info.\n";
 			else
 			{
-				int pid = stoi(arg);
+				int pid = atoi(arg);
 				kill (pid, SIGTERM);
 				cout << "\nKilled PID: " << pid << "\n";
 			}
