@@ -34,18 +34,13 @@ double preemp_sjf(vector <int> art, vector <int> bt)
 
 	for (int i = 1; i < n; ++i)
 	{
-		//cout <<"iteration for i = "<<i<<endl;
-		//cout << "current queue contains "<<endl;
-
 		while(!queue.empty() )
 		{
 			curr = queue.top();
-			//cout << "popped "<<curr.in<< " "<<curr.rem<<endl;
 			queue.pop();
 			if(ct + curr.rem > art[i])
 			{
 				queue.push(node(curr.in, curr.rem - art[i] + ct));
-				//cout<<"pushing "<<curr.in<< " "<< curr.rem - art[i] + ct << endl;
 				ct = art[i];
 				break;
 			}
@@ -54,16 +49,12 @@ double preemp_sjf(vector <int> art, vector <int> bt)
 				ct += curr.rem;
 				tnt += ct - art[curr.in];
 			}
-			
-			//cout<<"process ending at "<<ct<<" "<<curr.in<<endl;
 		}
 
 		ct = art[i];
 
 		queue.push(node(i, bt[i]));
-		//cout<<"pushing "<<i<<" "<< bt[i]<<endl;
 	}
-	//cout <<"\n all process are done\n";
 
 	while(!queue.empty() )
 	{
@@ -88,31 +79,24 @@ double fcfs (vector <int> art, vector <int> bt)
 		ct += bt[i];
 		tnt += (ct - art[i]);
 	}
-	//cout << tnt << " ";
 	return ((1.0 * tnt) / n);
 }
 
 double roundrobin (vector <int> art, vector <int> bt, int del)
 {
 	int n = bt.size(), h = n, i = 0, ct = 0, tnt = 0;
-	//cout << n;
 	while (h)
 	{
 		i %= h;
-		//cout << "oi\n";
 		if (ct < art[i])
 			ct = art[i];
 		if (bt[i] <= del)
 		{
 			ct += bt[i];
 			tnt += (ct - art[i]);
-			//cout << "arr\n";
 			art.erase(art.begin() + i);
 			bt.erase(bt.begin() + i);
-			//cout << "barr\n";
 			--h;
-			//if (h == 0)
-			//	break;
 		}
 		else
 		{
@@ -120,7 +104,6 @@ double roundrobin (vector <int> art, vector <int> bt, int del)
 			bt[i] -= del;
 			i += 1;
 		}
-		//cout << ct << " " << tnt << "\n";
 	}
 	return ((1.0 * tnt) / n);
 }
@@ -134,15 +117,15 @@ int main()
 	double t;
 
     ofstream fcf_file;
-  	fcf_file.open ("fcfs.dat",std::ofstream::out | std::ofstream::app);
+  	fcf_file.open ("../Outputs/FCFS.dat",std::ofstream::out | std::ofstream::app);
   	ofstream sjf_file;
-  	sjf_file.open ("sjf.dat",std::ofstream::out | std::ofstream::app);
+  	sjf_file.open ("../Outputs/P-SJF.dat",std::ofstream::out | std::ofstream::app);
   	ofstream rr1_file;
-  	rr1_file.open ("rr1.dat",std::ofstream::out | std::ofstream::app);
+  	rr1_file.open ("../Outputs/RR1.dat",std::ofstream::out | std::ofstream::app);
   	ofstream rr2_file;
-  	rr2_file.open ("rr2.dat",std::ofstream::out | std::ofstream::app);
+  	rr2_file.open ("../Outputs/RR2.dat",std::ofstream::out | std::ofstream::app);
   	ofstream rr3_file;
-  	rr3_file.open ("rr3.dat",std::ofstream::out | std::ofstream::app);
+  	rr3_file.open ("../Outputs/RR3.dat",std::ofstream::out | std::ofstream::app);
 
 
 	cout << "Please enter number of processes: ";
@@ -168,9 +151,6 @@ int main()
 
 			// generating uniform burst times
 			bt.push_back((rand() % 20) + 1);
-			//cout << i + 1 << ". " << art[i] << " " << bt[i] << "\n";
-			//cout << roundrobin(art, bt, 5) << "\n";
-			//cout << fcfs(art, bt) << "\n";
 		}
 		art.pop_back();
 
@@ -180,25 +160,19 @@ int main()
 		avg_rr1 += roundrobin(art, bt, 1);
 		avg_rr2 +=roundrobin(art, bt, 2);
 		avg_rr3 +=roundrobin(art, bt, 5);
-		/* code */
 	}
+
 	fcf_file << n <<"\t"<<avg_fcfs/10<<endl;
 	sjf_file << n <<"\t"<<avg_sjf/10<<endl;
 	rr1_file << n <<"\t"<<avg_rr1/10<<endl;
 	rr2_file << n <<"\t"<<avg_rr2/10<<endl;
 	rr3_file << n <<"\t"<<avg_rr3/10<<endl;
+	
 	fcf_file.close();
 	sjf_file.close();
 	rr1_file.close();
 	rr2_file.close();
 	rr3_file.close();
-	//cout << preemp_sjf(art, bt);
-	/*
-	int h[] = {0, 7, 10, 12};
-	int w[] = {4, 11, 2, 5};
-	art.assign(h, h + 4);
-	bt.assign(w, w + 4);
-	cout << fcfs(art, bt) << "\n";*/
 
 	return 0;
 }
