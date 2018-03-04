@@ -16,7 +16,6 @@ struct shared_struct
   int out;
 };
 
-shared_struct *myseg;
 int SHM_SIZE;
 
 vector<int> prime_numbers;
@@ -88,7 +87,7 @@ void producer(key_t key, int serial_no)
   float wait_time;
   time_t mytime;
 
- // shared_struct *myseg =attach_memory(key);
+  shared_struct *myseg =attach_memory(key);
   pr_no = generate_random_prime_no();
   wait_time = generate_random_float();
   usleep(wait_time*1000000.0);
@@ -116,7 +115,7 @@ void consumer(key_t key, int serial_no)
   time_t mytime;
   wait_time = generate_random_float();
 
-  //shared_struct *myseg = attach_memory(key);
+  shared_struct *myseg = attach_memory(key);
 
   usleep(wait_time*1000000.0);
 
@@ -151,7 +150,7 @@ int main()
     return 0;
   }
 
-  myseg = (shared_struct *)shmat(shmid, NULL, 0);
+  shared_struct *myseg = (shared_struct *)shmat(shmid, NULL, 0);
 
   if(myseg == (shared_struct *)-1)
   {
