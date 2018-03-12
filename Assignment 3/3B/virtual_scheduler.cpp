@@ -6,7 +6,7 @@ using namespace std;
 #include <pthread.h>
 
 
-#define SIZE 1000
+#define SIZE 3000
 #define inf 120
 
 vector<int> STATUS; // -1 <- terminated : 0 <- sleep : 1<- running
@@ -53,7 +53,7 @@ void * WORKER(void *ptr)
 	for (int i = 0; i < SIZE; ++i)
 	{
 			vec.push_back((rand() % 1000) + 1);
-			cout << vec[i]<<" ";
+			//cout << vec[i]<<" ";
 	}
 	cout << endl;
 	wait_time = generate_random_float();
