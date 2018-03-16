@@ -29,13 +29,13 @@ struct sb
 // inode structure
 struct in
 {
-	bool ftype;
-	int fsize, spused;
-	time_t lastmod;
-	time_t lastrd;
-	int accp, md;
-	int * dirbl, cloc;
-	int sindbl, slbloc;
+	bool ftype; 		//filetype
+	int fsize, spused;	//filesize, spaceused in last block of the file
+	time_t lastmod;		//lastmodified
+	time_t lastrd;		//lst read
+	int accp, md;		//access permission 0777 0770
+	int * dirbl, cloc;	//array of direct block, direct block
+	int sindbl, slbloc;	// single indirect block, 
 	int dindbl, dlbloc;
 
 	in();
@@ -51,8 +51,8 @@ struct fsys
 
 	fsys (int);
 	int createdir();
-	int appendloc (int&);
-	int addentry (char *, bool);
+/*	int appendloc (int&);
+*/	int addentry (char *, bool);
 	char * addblock (in&);
 } * myfs;
 
