@@ -1,8 +1,11 @@
-#ifndef FILESYS_H
-#define FILESYS_H
+//
+// Created by Vishesh Agarwal on 19/03/18.
+//
+
+#ifndef FS_FILESYS_H
+#define FS_FILESYS_H
 
 #include "structures.h"
-#include <stdio.h>
 
 #define NAMELEN 30
 #define INLEN 2
@@ -10,23 +13,21 @@
 
 int create_myfs (int);
 int copy_pc2myfs(char *, char *);
+int copy_myfs2pc(char *, char *);
+int rm_myfs(char *);
+int showfile_myfs(char *);
+int ls_myfs();
+int mkdir_myfs(char *);
+int chdir_myfs(char *);
+int rmdir_myfs(char *);
+int open_myfs(char *, char);
+int close_myfs(int);
+int read_myfs(int, int, char *);
+int write_myfs(int, int, char *);
+int eof_myfs(int);
+int dump_myfs(char *);
+int restore_myfs(char *);
+int status_myfs();
+int chmod_myfs(char *, int);
 
-struct direntry
-{
-	char name[NAMELEN + 1];
-	short inno;
-
-	void print()
-	{
-		cout << inno << " " << name << "\n";
-		return;
-	}
-
-	direntry (char * s)
-	{
-		snprintf (name, NAMELEN + 1, "%s", s);
-		inno = *(s + NAMELEN);
-	}
-};
-
-#endif
+#endif //FS_FILESYS_H
