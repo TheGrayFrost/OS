@@ -2,14 +2,15 @@
 using namespace std;
 
 #define VIRTUAL_ADDR_SPACE 64
-#define MAX_FRAMES 3
+#define MAX_FRAMES 8
 #define FIFO 0
 #define LRU 2
 #define RANDOM 3
 #define NRU 4
 #define SEC_CHANCE 5
+#define ll long long
 
-int pg_table[VIRTUAL_ADDR_SPACE], wr;
+int pg_table[VIRTUAL_ADDR_SPACE], wxtr;
 queue<int> pages_loaded; 
 list<int> lru_list;
 list<int> rand_list;
@@ -80,6 +81,18 @@ void unset_r_bit(int pg)
 {
 	pg_table[pg] = pg_table[pg] & ~1;
 	return;
+}
+
+void print_p_table()
+{
+	cout <<"<---------------PAGE TABLE---------------------->\n";
+	cout <<"PG\tFrame"<<endl;
+	for (int i = 0; i < VIRTUAL_ADDR_SPACE; ++i)
+	{
+		if(is_valid(i))
+			cout << i <<"\t"<<frame_no(i)<<endl;
+	}
+
 }
 int replace_with(int algo, int line_no) // returns the page to be 
 {
@@ -215,14 +228,14 @@ void my_map(int algo, int pg, int fr)
 
 void random_case()
 {
-
+		ll mem_ref = 0, pg_in =0 , pg_out = 0;
 		int wr, pg; // =1 , read only
 		int rep_algo = RANDOM;
 
 		string word;
 		int line_no=0, fr, old_pg;
 
-		std::ifstream input( "ip.txt" );
+		std::ifstream input( "final_input" );
 
 		for( std::string line; getline( input, line ); )
 		{
@@ -238,18 +251,21 @@ void random_case()
 				pg = atoi(word.c_str());
 /*			cout <<pg<<endl;
 */
-		
+				mem_ref ++;
 			
 		if(!is_valid(pg))
 		{
-
+			pg_in ++;
 			if(rand_list.size() >= MAX_FRAMES)
 			{
 				old_pg = replace_with(rep_algo, line_no);
 
 				fr = frame_no(old_pg);
 				cout <<line_no<< ": UNMAP\t" <<  old_pg<<"\t"<<fr<<endl ;
-				if(is_modified(old_pg))cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;
+				if(is_modified(old_pg)){
+					pg_out++;
+					cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;
+				}
 				pg_table[old_pg] = 0;
 
 			}
@@ -264,18 +280,28 @@ void random_case()
 			my_map(rep_algo,pg, fr);
 			cout <<line_no<<": MAP\t"<< pg <<"\t"<<fr<<endl;
 		}
+		if(wr == 1) set_modified(pg);
 
 	}
+
+		cout << "<--------------------PAGE STATISTICS-------------------->"<<endl;
+		cout <<"Memory References :\t"<<mem_ref<<endl;
+		cout <<"Page in :\t" <<pg_in<<endl;
+		cout <<"Page out :\t"<<pg_out<<endl;
+
+		print_p_table();
+
 }
 void lru_case()
 {
+
 		int wr, pg; // =1 , read only
 		int rep_algo = LRU;
-
+		ll pg_in = 0, pg_out = 0, mem_ref = 0;
 		string word;
 		int line_no=0, fr, old_pg;
 
-		std::ifstream input( "ip.txt" );
+		std::ifstream input( "final_input" );
 
 		for( std::string line; getline( input, line ); )
 		{
@@ -290,6 +316,7 @@ void lru_case()
 			is >> word;
 				pg = atoi(word.c_str());
 			//cout <<pg<<endl;
+			mem_ref++;
 
 		if(is_valid(pg))
 		{
@@ -299,12 +326,16 @@ void lru_case()
 		}
 		else
 		{
+			pg_in++;
 			if( lru_list.size() >= MAX_FRAMES)
 			{
 				old_pg = replace_with(rep_algo, line_no);
 				fr = frame_no(old_pg);
 				cout <<line_no<< ": UNMAP\t" <<  old_pg<<"\t"<<fr<<endl ;
-				if(is_modified(old_pg))cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;
+				if(is_modified(old_pg)){
+					pg_out++;
+					cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;
+				}
 				pg_table[old_pg] = 0;
 
 			}
@@ -318,19 +349,29 @@ void lru_case()
 			my_map(rep_algo,pg, fr);
 			cout <<line_no<<": MAP\t"<< pg <<"\t"<<fr<<endl;
 		}
+		if(wr == 1) set_modified(pg);
 	}
+
+		cout << "<--------------------PAGE STATISTICS-------------------->"<<endl;
+		cout <<"Memory References :\t"<<mem_ref<<endl;
+		cout <<"Page in :\t" <<pg_in<<endl;
+		cout <<"Page out :\t"<<pg_out<<endl;
+
+		print_p_table();
+
 }
 // to be done in all algos  ; set modified bit  = 1 if written to
 
 void fifo_case()
 {
+		ll pg_in = 0, pg_out = 0, mem_ref = 0;
 		int wr, pg; // =1 , read only
 		int rep_algo = FIFO;
 
 		string word;
 		int line_no=0, fr, old_pg;
 
-		std::ifstream input( "ip.txt" );
+		std::ifstream input( "final_input" );
 
 		for( std::string line; getline( input, line ); )
 		{
@@ -346,17 +387,24 @@ void fifo_case()
 			is >> word;
 				pg = atoi(word.c_str());
 		
-			
+			mem_ref++;
 			if(is_valid(pg))
 				{if(wr) set_modified(pg);}
 			else
 			{
+				pg_in++;
 				if(pages_loaded.size() >= MAX_FRAMES)
 				{
+
 					old_pg = replace_with(rep_algo, line_no);
 					fr = frame_no(old_pg);
 					cout <<line_no<< ": UNMAP\t" <<  old_pg<<"\t"<<fr<<endl ;
-					if(is_modified(old_pg))cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;
+
+					if(is_modified(old_pg)){
+						pg_out++;
+						cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;
+					}
+
 					pg_table[old_pg] = 0;
 
 				}
@@ -370,18 +418,26 @@ void fifo_case()
 				if(wr) set_modified(pg);
 			}
 
-	}
+		}
+
+		cout << "<--------------------PAGE STATISTICS-------------------->"<<endl;
+		cout <<"Memory References :\t"<<mem_ref<<endl;
+		cout <<"Page in :\t" <<pg_in<<endl;
+		cout <<"Page out :\t"<<pg_out<<endl;
+
+		print_p_table();
 }
 
 void second_chance() // complete tested!
 {
+		ll mem_ref = 0, pg_in = 0, pg_out = 0;
 		int wr, pg; // =1 , read only
 		int rep_algo = SEC_CHANCE;
 
 		string word;
 		int line_no=0, fr, old_pg;
 
-		std::ifstream input( "input.txt" );
+		std::ifstream input( "final_input" );
 
 		for( std::string line; getline( input, line ); )
 		{
@@ -395,6 +451,8 @@ void second_chance() // complete tested!
 				wr = atoi(word.c_str());
 			is >> word;
 				pg = atoi(word.c_str());
+			mem_ref++;
+
 			if(is_valid(pg))
 			{
 				set_r_bit(pg);
@@ -402,13 +460,15 @@ void second_chance() // complete tested!
 			} 	
 			else
 			{
-
+				pg_in++;
 				if(sec_vec.size() >= MAX_FRAMES)
 				{
 					old_pg = replace_with(rep_algo, line_no);
 					fr = frame_no(old_pg);
 					cout <<line_no<< ": UNMAP\t" <<  old_pg<<"\t"<<fr<<endl ;
-					if(is_modified(old_pg))cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;
+					if(is_modified(old_pg)){
+						pg_out++;
+						cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;}
 					pg_table[old_pg] = 0;
 					
 
@@ -426,7 +486,15 @@ void second_chance() // complete tested!
 				set_modified(pg);
 			}
 
-	}
+		}
+
+		cout << "<--------------------PAGE STATISTICS-------------------->"<<endl;
+		cout <<"Memory References :\t"<<mem_ref<<endl;
+		cout <<"Page in :\t" <<pg_in<<endl;
+		cout <<"Page out :\t"<<pg_out<<endl;
+
+		print_p_table();
+
 }
 
 
@@ -440,14 +508,14 @@ void clear_ref_bits()
 
 void nru_case() // working tested!
 {
-
+		ll mem_ref =0, pg_in = 0, pg_out = 0, wr;
 		int pg; // =1 , read only
 		int rep_algo = NRU;
 		int mem_acc = 0;
 		string word;
 		int line_no=0, fr, old_pg;
 
-		std::ifstream input( "ip.txt" );
+		std::ifstream input( "final_input" );
 
 		for( std::string line; getline( input, line ); )
 		{
@@ -464,6 +532,7 @@ void nru_case() // working tested!
 				wr = atoi(word.c_str());
 			is >> word;
 				pg = atoi(word.c_str());
+			mem_ref++;
 
 		if(is_valid(pg) )
 		{
@@ -471,12 +540,16 @@ void nru_case() // working tested!
 		}
 		else
 		{
+			pg_in++ ;
 			if(nru_list.size() >= MAX_FRAMES)
 			{
 				old_pg = replace_with(rep_algo, line_no);
 				fr = frame_no(old_pg);
 				cout <<line_no<< ": UNMAP\t" <<  old_pg<<"\t"<<fr<<endl ;
-				if(is_modified(old_pg))cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;
+				if(is_modified(old_pg)){
+					pg_out++;
+					cout << line_no<<": OUT\t "<<old_pg<<"\t"<<fr<<endl;
+				}
 				pg_table[old_pg] = 0;
 
 			}
@@ -489,8 +562,16 @@ void nru_case() // working tested!
 			cout <<line_no<<": MAP\t"<< pg <<"\t"<<fr<<endl;
 			set_r_bit(pg);
 		}
+		if(wr == 1) set_modified(pg);
 
 	}
+		cout << "<--------------------PAGE STATISTICS-------------------->"<<endl;
+		cout <<"Memory References :\t"<<mem_ref<<endl;
+		cout <<"Page in :\t" <<pg_in<<endl;
+		cout <<"Page out :\t"<<pg_out<<endl;
+
+		print_p_table();
+
 }
 void initialize_table()
 {
@@ -503,22 +584,26 @@ void initialize_table()
 int main()
 {
 	initialize_table();
-	cout <<"FIFO"<<endl<<endl;
+	cout <<"\n\nFIFO"<<endl<<endl;
 	fifo_case(); // working :)
 
 	initialize_table();
-	cout <<"second_chance"<<endl<<endl;
-	second_chance(); // working :)
-	
-	initialize_table();
-	cout <<"NRU"<<endl<<endl;
-	nru_case(); // working :p
-	
-	initialize_table();
-	cout <<"RANDOM"<<endl<<endl;
+	cout <<"\n\nRANDOM"<<endl<<endl;
 	random_case(); // done, and debuuged xD
-	
+
 	initialize_table();
-	cout <<"LRU"<<endl<<endl;
+	cout <<"\n\nLRU"<<endl<<endl;
 	lru_case(); // done! :D
+
+	initialize_table();
+	cout <<"\n\nNRU"<<endl<<endl;
+	nru_case(); // working :p
+
+	initialize_table();
+	cout <<"\n\nsecond_chance"<<endl<<endl;
+	second_chance(); // working :)
+
+	
+	
+	
 }
