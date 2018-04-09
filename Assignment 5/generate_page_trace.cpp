@@ -7,12 +7,12 @@ using namespace std;
 int main()
 {
 	int n_ref = 1000;// 1 million
-	float prob = 0.99;
+	float prob = 0.90;
 
 	int l_page = 0;
 
 	ofstream output;
-  	output.open ("input_file.txt",std::ofstream::out | std::ofstream::app);
+  	output.open ("input_file2.txt",std::ofstream::out | std::ofstream::app);
 
 	output << "1\t"<< l_page<<endl;
 	for (int i = 0; i < n_ref; ++i)
