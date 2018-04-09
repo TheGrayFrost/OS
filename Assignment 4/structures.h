@@ -8,7 +8,8 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
-#include <string.h>
+#include <cstring>
+#include <semaphore.h>
 
 #define MAXINODE 1024   //maximum number of inodes allowed in filesystem
 #define DBSIZE 256      //datablock size
@@ -42,18 +43,6 @@ struct sb
 // inode structure
 struct in
 {
-<<<<<<< HEAD
-	bool ftype; 		//filetype
-	int fsize, spused;	//filesize, spaceused in last block of the file
-	time_t lastmod;		//lastmodified
-	time_t lastrd;		//lst read
-	int accp, md;		//access permission 0777 0770
-	int * dirbl, cloc;	//array of direct block, direct block
-	int sindbl, slbloc;	// single indirect block, 
-	int dindbl, dlbloc;
-
-	in();
-=======
     bool ftype; 		//filetype: true -> directory
     int fsize;		    //filesize & spaceused in the last block of the file
     time_t lastmod;		//last modified time
@@ -79,25 +68,11 @@ struct fdentry
 
     fdentry() {inno = pointer = -1;}
     void clear() {inno = pointer = -1;}
->>>>>>> Finally
 };
 
 // filesys structure
 struct fsys
 {
-<<<<<<< HEAD
-	sb * superbl;
-	in * inlist;
-	char (* dblist) [DBSIZE];
-	unsigned short pwd;
-
-	fsys (int);
-	int createdir();
-/*	int appendloc (int&);
-*/	int addentry (char *, bool);
-	char * addblock (in&);
-} * myfs;
-=======
     sb * superbl;
     in inlist[MAXINODE];
     char (* dblist) [DBSIZE];
@@ -113,7 +88,6 @@ struct fsys
     int getpwd();
     void chpwd(int);
 };
->>>>>>> Finally
 
 void us2char (char *, unsigned short);
 void int2char (char *, int);

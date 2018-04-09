@@ -123,18 +123,6 @@ char * fsys::addblock (in& ap)
 //the inode returned is fresh and clear
 int fsys::addentry (char * nm, bool ty)
 {
-<<<<<<< HEAD
-	char * u = NULL;
-	in * r = &inlist[pwd];
-	if (r->spused == DBSIZE)
-		u = addblock(inlist[pwd]);
-	else
-		u = &dblist[r->cloc][r->spused];
-
-	return 0;
-}
-
-=======
     char * u = NULL;
     in * r = &inlist[getpwd()];
     int bno = r->fsize / DBSIZE, spused = r->fsize % DBSIZE;
@@ -298,4 +286,3 @@ void fsys::chpwd(int newpwd)
 }
 
 
->>>>>>> Finally

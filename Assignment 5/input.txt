@@ -1,9 +1,0 @@
-# Example page reference trace
-# These are optional comment lines
-1 25
-0 45
-0 18
-1 25
-1 17
-1 45
-1 6

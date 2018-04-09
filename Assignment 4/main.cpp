@@ -25,18 +25,13 @@ void *thread2_running (void *)
 {
     pthread_mutex_lock(&mutex1);
     chdir_myfs("mycode");
-    copy_pc2myfs("test1.txt", "newtest");
+    copy_pc2myfs("./test/test1.txt", "newtest");
     chdir_myfs("..");
     pthread_mutex_unlock(&mutex1);
 }
 
 int main()
 {
-    char del;
-    string tmp;
-    int N, nbytes;
-    int fd2, fd;
-    char buff[1024];
     assert(create_myfs(10) >= 0);
     
     // Test 1
@@ -49,7 +44,9 @@ int main()
         assert(copy_pc2myfs((char *)fname.c_str(),(char *)dname.c_str()) >= 0);
     }
 
-    
+    char del;
+    string tmp;
+
     do
     {
         assert(ls_myfs() >= 0);
@@ -63,16 +60,16 @@ int main()
     
 
     // Test 2
-    fd = open_myfs("mytest.txt", 'w');
+    int fd2, fd = open_myfs("mytest.txt", 'w');
     for (int i = 0; i < 100; i++)
     {
         tmp = to_string(rand() % 1000) + "\n";
         write_myfs(fd, strlen((char *)tmp.c_str()), (char *)tmp.c_str());
     }
     assert(close_myfs(fd) >= 0);
-    //showfile_myfs("mytest.txt");
-    //ls_myfs();
 
+    int N, nbytes;
+    char buff[1024];
     
     cout << "\nEnter number of copies to be made : ";
     cin >> N;
@@ -90,11 +87,11 @@ int main()
         close_myfs(fd2);
     }
     assert(ls_myfs() >= 0);
-    assert(dump_myfs("mydump-34.backup") == 0);
+    assert(dump_myfs("./mydump-34.backup") == 0);
 
 
     // Test 3
-    assert(restore_myfs("mydump-34.backup") >= 0);
+    assert(restore_myfs("./mydump-34.backup") >= 0);
     assert(ls_myfs() >= 0);
 
     fd = open_myfs("mytest.txt", 'r');

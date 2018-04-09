@@ -4,6 +4,9 @@
 
 #include "structures.h"
 
+
+sem_t sem1, sem2;
+
 sb::sb (int s)
 {
     size = s * 1024 * 1024;
